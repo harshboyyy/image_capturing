@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="transition duration-300">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Caption Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center text-gray-900 dark:text-gray-100 transition duration-300">
+
+  <!-- 🌗 Toggle Button Outside the Container -->
+  <div class="w-full max-w-7xl flex justify-end px-6 pt-4">
+    <button id="toggleDark" class="text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-1.5 rounded-full hover:scale-105 transition-all">
+      Toggle 🌙 / ☀️
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl p-8 mt-4 transition duration-300">
+    <h1 class="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">🧠 Image Caption Generator</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6" id="upload-form">
+      <div id="drop-area" class="relative flex flex-col items-center justify-center border-4 border-dashed border-blue-300 dark:border-blue-500 rounded-xl p-6 cursor-pointer transition hover:border-blue-500 bg-blue-50 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-gray-600">
+        <input type="file" name="image" id="image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required />
+        <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16v-4a4 4 0 018 0v4m1 4H6a2 2 0 01-2-2v-4a6 6 0 0112 0v4a2 2 0 01-2 2z" />
+        </svg>
+        <p class="text-gray-600 dark:text-gray-300">Click or drag & drop to upload an image</p>
+      </div>
+
+      <div class="text-center">
+        <input type="submit" value="🔍 Generate Caption" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition font-semibold" />
+      </div>
+    </form>
+
+    <!-- Image Preview -->
+    <div id="preview-container" class="mt-8 hidden fade-in">
+      <h2 class="text-lg font-medium text-center">📷 Preview:</h2>
+      <img id="preview-image" src="#" alt="Image Preview" class="rounded-lg mx-auto max-h-64 shadow mt-2" />
+    </div>
+
+    <!-- Caption Output -->
+    {% if caption %}
+    <div class="mt-10 fade-in">
+      <h2 class="text-xl font-semibold">📝 Generated Caption:</h2>
+      <p class="mt-2 text-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 p-4 rounded border dark:border-gray-600">{{ caption }}</p>
+      <div class="mt-6 text-center">
+        <img src="{{ image }}" alt="Generated Image" class="rounded-lg shadow-lg max-h-96 mx-auto" />
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-8 mb-4 text-center text-sm text-gray-600 dark:text-gray-400">
+    Created by 
+    <a href="https://github.com/SaranshGupta02" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+      SaranshGupta02
+    </a>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    const imageInput = document.getElementById('image');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const toggleDark = document.getElementById('toggleDark');
+    const htmlEl = document.documentElement;
+
+    // Show preview
+    imageInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+          previewContainer.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewContainer.classList.add('hidden');
+      }
+    });
+
+    // Dark mode toggle with localStorage
+    function setDarkMode(enabled) {
+      if (enabled) {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Load saved preference
+    if (localStorage.getItem('theme') === 'dark') {
+      htmlEl.classList.add('dark');
+    }
+
+    toggleDark.addEventListener('click', () => {
+      const isDark = htmlEl.classList.contains('dark');
+      setDarkMode(!isDark);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Don't upload model weights
+caption_model.weights.h5
+
+# Don't upload virtual environment
+imageCaptioning/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Jupyter notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# Ignore system files
+.DS_Store
+
+# Uploaded images folder (optional)
+static/uploads/*
